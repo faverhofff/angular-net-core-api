@@ -1,0 +1,12 @@
+<div class="message">
+    <div ngClass="alert-{{type}}" class="alert inner-message" role="alert">
+        <label class="msg-title">{{title}}</label>
+        <button class="outline-box-none c-poiter" type="button" class="close" aria-label="Close" (click)="closeAlert()">
+            <strong class="text-white c-poiter">x</strong>
+            <!--<i class="fa fa-close align-middle fa-2x text-white" aria-hidden="true"></i>-->
+            <!--<i class="fas fa-times align-middle fa-xl text-white outline-box-none"></i>-->
+        </button>
+        <br><br>
+        <p class="msg-content">{{content}}</p>
+    </div>
+</div>

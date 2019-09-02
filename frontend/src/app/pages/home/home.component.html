@@ -1,0 +1,170 @@
+<div class="row">
+    <div class="col-12 text-center">
+        <h2>Listado de Usuarios Registrados</h2>
+        <br>
+    </div>
+</div>    
+    
+<div class="row">
+    <div class="col-12 text-center">
+        <i (click)="newUser()" class="btn btn-blue outline-box-none icon icon-edit-item mr-2 align-middle c-poiter" data-placement="bottom" title="Crear">Crear Usuario</i>
+    </div>
+</div>    
+
+<div class="row">
+    <div class="col-12">
+        <app-datatable-net 
+            #datatable 
+            [tableSettings]="tableSettings" >
+        </app-datatable-net>
+    </div>
+</div>
+
+<swal #EditionBox width="75%" [showConfirmButton]="false"
+    [allowOutsideClick]="true"
+    [allowEscapeKey]="true">
+    <form *swalPartial role="form" [formGroup]="accountDefinition">
+        <div class="col-12 swal-title text-center">
+            <h4>Editar Usuario </h4>
+        </div>
+
+        <span _ngcontent-c6="" class="invalid-feedback" ng-reflect-ng-class="invalid-feedback">
+            {{error}}
+        </span>
+
+        <div class="row">
+            <div class="col-md-3 col-lg-3">
+               <div class="form-group">
+                    <label for="correo" class="col-form-label">
+                        Correo
+                        <i class="icon icon-asterisc align-middle fa-xl"></i>
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           formControlName="email"
+                           placeholder="Correo"
+                           required>
+                </div>               
+            </div>         
+
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="name" class="col-form-label">
+                        Nombre
+                    </label>
+                    <input type="text"
+                        class="form-control"
+                        formControlName="name"
+                        placeholder="Nombre"
+                        >
+                </div>               
+            </div>
+
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="lastName" class="col-form-label">
+                        Apellidos
+                    </label>
+                    <input type="text"
+                        class="form-control"
+                        formControlName="lastName"
+                        placeholder="Apellidos"
+                        >
+                </div>               
+            </div>            
+            
+            <div *ngIf="this.accountDefinition.controls['id'].value === ''" class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="password" class="col-form-label">
+                        Contrase&ntilde;a
+                    </label>
+                    <input type="password"
+                        class="form-control"
+                        formControlName="password"
+                        placeholder="Contraseña"
+                        >
+                </div>               
+            </div>     
+
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="years" class="col-form-label">
+                        A&ntilde;os de Experiencia
+                    </label>
+                    <input type="number"
+                        class="form-control"
+                        formControlName="years"
+                        placeholder="Años de Experiencia"
+                        >
+                </div>               
+            </div>            
+
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="postDate" class="col-form-label">
+                        Fecha de Postulaci&oacute;n
+                    </label>
+                    <my-date-picker
+                        [locale]="'es'"
+                        [options]="periodStartOptionsDP"
+                        [(ngModel)]="startInitDate"
+                        formControlName="postDate">
+                    </my-date-picker>                        
+                </div>               
+            </div>            
+
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="position" class="col-form-label">
+                        Posici&oacute;n
+                    </label>
+                    <input type="text"
+                        class="form-control"
+                        formControlName="position"
+                        placeholder="Posición"
+                        >
+                </div>               
+            </div>     
+
+            <input type="hidden" >
+        </div>    
+
+        <div class="row">
+
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    <label for="position" class="col-form-label">
+                        Foto
+                    </label>
+                    <input #file type="file" multiple (change)="upload(file.files)" />
+                </div>               
+            </div>              
+
+        </div>
+        
+        <!--BTN Editar-->
+        <div class="row">
+            <div class="col-12 text-right">
+                <button type="button"
+                        class="btn btn-blue outline-box-none"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Guardar"
+                        (click)="saveOnCloseModal()">
+                    <i class="icon icon-save align-middle"></i>
+                    <span class="align-middle">Guardar</span>
+                </button>
+                &nbsp;
+                <button class="btn btn-white mr-2 outline-box-none"
+                        type="button"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        (click)="CloseModal()"
+                        title="Cerrar">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+
+    </form>
+</swal>  

@@ -1,0 +1,28 @@
+<div [ngClass]="settings.class" class="datatable-net">
+    <!--<table [ngClass]="settings.class" class="table table-hover no-footer display dt-responsive" width="100%"></table>-->
+    <table *ngIf="!destroy" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="iList table table-striped no-footer display nowrap">
+      <thead *ngIf="settings.columnsHtml.length">
+        <tr *ngFor="let tr of settings.columnsHtml" [attr.class]="tr?.className">
+          <td *ngFor="let th of tr.columns"
+              [attr.data-name]="th?.data"
+              [attr.data-orderable]="th?.orderable"
+              [attr.data-searchable]="th?.searchable"
+              [attr.class]="th?.className"
+              [attr.colspan]="th?.colspan"
+              [attr.rowspan]="th?.rowspan">
+            {{th.title}}
+          </td>
+        </tr>
+        </thead>
+        <tfoot *ngIf="settings.footerCallback">
+            <tr>
+                <th *ngFor="let column of settings.columns"
+                    [attr.colspan]="column.footer?.colspan || 1"
+                    [attr.class]="column.footer?.class"
+                >
+                    {{ column.footer?.title }}
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

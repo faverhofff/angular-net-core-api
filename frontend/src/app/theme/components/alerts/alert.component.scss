@@ -1,0 +1,69 @@
+@import "../../../../assets/sass/variables";
+
+.message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 30%;
+    z-index: 9999;
+
+    .close {
+        opacity: 1;
+        text-shadow: none;
+
+        i {
+            color: $white;
+            font-size: 1.3rem;
+            font-weight: lighter;
+        }
+    }
+
+    .msg-title {
+        font-family: Catamaran-Regular, "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: $white;
+    }
+    .msg-content {
+        font-family: Catamaran-Regular, "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: $white;
+    }
+}
+
+.inner-message {
+    margin: 0 auto;
+}
+
+.alert-purple {
+    color: $white;
+    background-color: $purple;
+    border-color: $purple;
+}
+
+.alert-danger {
+    color: $white;
+    background-color: $danger;
+    border-color: $danger;
+}
+
+.alert-warning {
+    color: $white;
+    background-color: $warning;
+    border-color: $warning;
+}
+
+.alert-success {
+    color: $white;
+    background-color: $success;
+    border-color: $success;
+}
+
+@media (max-width: 768px) {
+    .message {
+        width: 50%;
+    }
+}
+
+@media (max-width: 426px) {
+    .message {
+        width: 90%;
+    }
+}

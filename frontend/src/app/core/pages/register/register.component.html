@@ -1,0 +1,95 @@
+<div class='container-fluid'>
+    <div class="row">
+        <!--Page Contents-->
+        <div class="col-12 col-md-6 col-lg-4 offset-md-3 offset-lg-4 pt-7">
+
+            <div class="main-container">
+                <!--Notification-->
+                <div *ngIf="error" class="text-danger">
+                    <small>{{error}}</small>
+                </div>
+                <form class="form-horizontal needs-validation" role="form" [formGroup]="form" (ngSubmit)="create()" novalidate>
+
+                    <!--Username-->
+                    <div class="form-group">
+                        <label for="email" class="col-form-label">
+                            Usuario
+                        </label>
+
+                        <input [formControl]="email" id="email" type="email" class="form-control" name="email" required>
+
+                        <div class="invalid-feedback feedback-icon"
+                             *ngIf="email.invalid && (email.dirty || email.touched)"
+                             class="help-block">
+                            <i class="icon icon-error_messages align-middle fa-sm text-danger"></i>
+                            <span class="text-danger">
+                                {{email.errors?.error ? email.errors?.error : ''}}
+                            </span>
+                            <span class="text-danger">Este campo es obligatorio</span>
+                        </div>
+                    </div>
+
+                    <!--Password-->
+                    <div class="form-group">
+                        <label for="password" class="col-form-label">
+                            Contrase&ntilde;a
+                        </label>
+
+                        <input [formControl]="password" id="password" type="password" class="form-control" name="password" required>
+
+                        <div class="invalid-feedback feedback-icon"
+                             *ngIf="password.invalid && (password.dirty || password.touched)"
+                             class="help-block">
+                            <i class="icon icon-error_messages align-middle fa-sm text-danger"></i>
+                            <span class="text-danger">
+                                {{password.errors?.error ? password.errors?.error : ''}}
+                            </span>
+                            <span class="text-danger">Este campo es obligatorio</span>
+                        </div>
+                    </div>
+
+                    <!--Re-Enter Password-->
+                    <div class="form-group">
+                        <label for="repassword" class="col-form-label">
+                            Re-Entre Contrase&ntilde;a
+                        </label>
+
+                        <input [formControl]="repassword" id="repassword" type="password" class="form-control" name="repassword" required>
+
+                        <div class="invalid-feedback feedback-icon"
+                             *ngIf="repassword.invalid && (repassword.dirty || repassword.touched)"
+                             class="help-block">
+                            <i class="icon icon-error_messages align-middle fa-sm text-danger"></i>
+                            <span class="text-danger">
+                                {{repassword.errors?.error ? repassword.errors?.error : ''}}
+                            </span>
+                            <span class="text-danger">Este campo es obligatorio</span>
+                        </div>
+                    </div>
+
+                    <!--Regresar-->
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-12 text-right">
+                            <div class="form-group">
+                                <a class="btn-link cursor" (click)="goLogin();">
+                                    Ir a Inicio de Sesi&oacute;n
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--BTN Ingresar-->
+                    <div class="row m-0">
+                        <button type="submit" class="btn btn-green outline-box-none col-12"
+                                data-toggle="tooltip"
+                                data-placement="bottom"
+                                title="Ingresar">
+                            <i class="icon icon-login align-middle"></i>
+                            <span class="align-middle">Registrar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
