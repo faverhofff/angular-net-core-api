@@ -25,3 +25,4 @@ De no ser satisfactorio, dentro del proyecto esta el fichero examen-bd.sql, con 
 
 F5, correr.
 
+NOTA: Las images subidas, se guardan en la carpeta Web-Upload/Upload. El nombre del fichero es el Id del usuario modificado.
