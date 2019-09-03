@@ -25,4 +25,8 @@ De no ser satisfactorio, dentro del proyecto esta el fichero examen-bd.sql, con 
 
 F5, correr.
 
-NOTA: Las images subidas, se guardan en la carpeta Web-Upload/Upload. El nombre del fichero es el Id del usuario modificado.
+NOTAS:
+
+1) Las images subidas, se guardan en la carpeta Web-Upload/Upload. El nombre del fichero es el Id del usuario modificado.
+
+2) En caso de que la migración no funcione, en la raiz de la carpeta "backend [.net core]" se encuentra el fichero examen-bd.sql, para resturar la base de datos.
