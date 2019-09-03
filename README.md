@@ -21,8 +21,6 @@ Configurar en el proyecto Web-Api el fichero   "appsettings.json". Dentro modifi
 
 Correr migraciones, ejecutando "update-database" en la consola de NuGet.
 
-De no ser satisfactorio, dentro del proyecto esta el fichero examen-bd.sql, con el script para crear nuevamente la estructura de datos.
-
 F5, correr.
 
 NOTAS:
