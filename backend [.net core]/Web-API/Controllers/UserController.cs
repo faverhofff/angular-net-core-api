@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WebAPI.Models;
-//using AutoMapper;
 
 namespace WebAPI.Controllers
 {
@@ -22,16 +21,16 @@ namespace WebAPI.Controllers
         private readonly Settings _appSettings;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public UserController(UserManager<User> userManager, IOptions<Settings> appSettings, IHostingEnvironment hostingEnvironment)
+        public UserController(UserManager<User> userManager, IOptions<Settings> appSettings, IMapper mapper, IHostingEnvironment hostingEnvironment)
         {
             _userManager = userManager;
             _appSettings = appSettings.Value;
             _hostingEnvironment = hostingEnvironment;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [Route("List")]
-        public async Task<Object> List([FromBody]DataTableViewModel dtViewModel)
+        public async Task<DataTable> List([FromBody]DataTableViewModel dtViewModel)
         {
             var list = this._userManager.Users.ToArray<User>();
 
@@ -44,7 +43,7 @@ namespace WebAPI.Controllers
             };
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public async Task<Object> Create([FromBody]UserViewModel model)
         {
             var applicationUser = new User()
@@ -57,7 +56,7 @@ namespace WebAPI.Controllers
                 PostDate = model.PostDate,
                 Position = model.Position
             };
-            
+
             try
             {
                 var result = await _userManager.CreateAsync(applicationUser, model.Password);
@@ -69,7 +68,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut, Authorize]
         public async Task<Object> Update([FromBody]UserViewModel model)
         {
             var applicationUser = await _userManager.FindByIdAsync(model.Id);
@@ -93,7 +92,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -109,7 +108,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost, DisableRequestSizeLimit]
+        [HttpPost, DisableRequestSizeLimit, Authorize]
         [Route("Upload")]
         public async Task<IActionResult> UploadFile()
         {
