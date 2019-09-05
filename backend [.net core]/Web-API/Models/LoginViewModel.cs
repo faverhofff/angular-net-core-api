@@ -8,7 +8,7 @@ namespace WebAPI.Models
 {
     public class LoginViewModel
     {
-        //[Required(ErrorMessage = "Material cost is required")]
+        [Required]
         public string Email { get; set; }
         public string Password { get; set; }
     }
