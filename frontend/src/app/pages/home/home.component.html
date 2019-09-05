@@ -23,9 +23,9 @@
 <swal #EditionBox width="75%" [showConfirmButton]="false"
     [allowOutsideClick]="true"
     [allowEscapeKey]="true">
-    <form *swalPartial role="form" [formGroup]="accountDefinition">
+    <form *swalPartial role="form" [formGroup]="accountForm">
         <div class="col-12 swal-title text-center">
-            <h4>Editar Usuario </h4>
+            <h4>{{ this.accountForm.controls.Id.value === -1 ? 'Crear' : 'Editar' }} Usuario </h4>
         </div>
 
         <span _ngcontent-c6="" class="invalid-feedback" ng-reflect-ng-class="invalid-feedback">
@@ -41,8 +41,7 @@
                     </label>
                     <input type="text"
                            class="form-control"
-                           formControlName="email"
-                           placeholder="Correo"
+                           formControlName="Email"
                            required>
                 </div>               
             </div>         
@@ -54,8 +53,7 @@
                     </label>
                     <input type="text"
                         class="form-control"
-                        formControlName="name"
-                        placeholder="Nombre"
+                        formControlName="Name"
                         >
                 </div>               
             </div>
@@ -67,21 +65,19 @@
                     </label>
                     <input type="text"
                         class="form-control"
-                        formControlName="lastName"
-                        placeholder="Apellidos"
+                        formControlName="LastName"
                         >
                 </div>               
             </div>            
             
-            <div *ngIf="this.accountDefinition.controls['id'].value === ''" class="col-md-3 col-lg-3">
+            <div *ngIf="accountForm.controls.Id.value === -1" class="col-md-3 col-lg-3">
                 <div class="form-group">
                     <label for="password" class="col-form-label">
                         Contrase&ntilde;a
                     </label>
                     <input type="password"
                         class="form-control"
-                        formControlName="password"
-                        placeholder="Contraseña"
+                        formControlName="Password"
                         >
                 </div>               
             </div>     
@@ -93,8 +89,7 @@
                     </label>
                     <input type="number"
                         class="form-control"
-                        formControlName="years"
-                        placeholder="Años de Experiencia"
+                        formControlName="Years"
                         >
                 </div>               
             </div>            
@@ -106,9 +101,9 @@
                     </label>
                     <my-date-picker
                         [locale]="'es'"
-                        [options]="periodStartOptionsDP"
-                        [(ngModel)]="startInitDate"
-                        formControlName="postDate">
+                        [options]="OptionsDP"
+                        [(ngModel)]="PostDate"
+                        formControlName="PostDate">
                     </my-date-picker>                        
                 </div>               
             </div>            
@@ -120,23 +115,22 @@
                     </label>
                     <input type="text"
                         class="form-control"
-                        formControlName="position"
-                        placeholder="Posición"
+                        formControlName="Position"
                         >
                 </div>               
             </div>     
 
-            <input type="hidden" >
+            <input type="hidden" formControlName="Id" >
         </div>    
 
         <div class="row">
 
             <div class="col-md-3 col-lg-3">
                 <div class="form-group">
-                    <label for="position" class="col-form-label">
+                    <label for="foto" class="col-form-label">
                         Foto
                     </label>
-                    <input #file type="file" multiple (change)="upload(file.files)" />
+                    <input #fileInput type="file" multiple (change)="uploadFile(file)" />
                 </div>               
             </div>              
 
@@ -150,6 +144,7 @@
                         data-toggle="tooltip"
                         data-placement="bottom"
                         title="Guardar"
+                        [disabled]="accountForm.invalid"
                         (click)="saveOnCloseModal()">
                     <i class="icon icon-save align-middle"></i>
                     <span class="align-middle">Guardar</span>

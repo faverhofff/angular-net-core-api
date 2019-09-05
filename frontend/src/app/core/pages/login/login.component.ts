@@ -12,12 +12,12 @@ import { AlertService } from '../../../theme/components/alerts/alert.service';
 export class LoginComponent implements OnInit {
 
     public form: FormGroup;
+    
     public email: AbstractControl;
+    
     public password: AbstractControl;
 
     public error: string;
-    public submitted = false;
-    public isSubmitting = false;
 
     constructor(private fb: FormBuilder,
                 private router: Router,
@@ -45,16 +45,12 @@ export class LoginComponent implements OnInit {
     }
 
     public login(): void {
-        this.submitted = true;
-
         const credentials = this.form.value;
-        this.isSubmitting = true;
         if (this.form.valid) {
 
             this.authenticationService.login(credentials.email, credentials.password)
                 .subscribe(
                     response => {
-                        this.isSubmitting = false;
                         if (response.status === 'OK') {
                             this.router.navigate(['/home']);
                         } else {
@@ -62,7 +58,6 @@ export class LoginComponent implements OnInit {
                         }
                     },
                     err => {
-                        this.isSubmitting = false;
                         let resolved = false;
 
                         switch (err.status) {

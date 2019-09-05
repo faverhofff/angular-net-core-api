@@ -1,14 +1,8 @@
-import {Observable, throwError as observableThrowError, empty} from 'rxjs';
+import {Observable, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
-
-import {AccessTokenService} from './access-token.service';
-import {HttpClient, HttpHeaders, HttpRequest, HttpEventType} from '@angular/common/http';
-import {Router} from '@angular/router';
+import {HttpRequest} from '@angular/common/http';
 import {catchError, map} from 'rxjs/internal/operators';
-import * as CryptoJS from 'crypto-js';
 import {environment} from '../../../environments/environment';
-import { User } from '../models/user';
-import { LoginForm } from '../models/login.form';
 import { AbstractService } from './abstract.service';
 
 @Injectable()
@@ -19,9 +13,10 @@ export class UserService extends AbstractService {
     /**
      * 
      * @param data 
+     * @param idNullValue 
      */
-    save(data): Observable<any> {
-        if (data.Id)
+    save(data, idNullValue = -1): Observable<any> {
+        if (data.Id != idNullValue)
             return this.update(data);
         else
             return this.create(data);
@@ -46,6 +41,10 @@ export class UserService extends AbstractService {
             catchError((error: any) => observableThrowError(error || 'Server error')));
     }
 
+    /**
+     * 
+     * @param data 
+     */
     update(data): Observable<any> {
         return this.http.put(
             `${environment.urlApiLocation}User`,
@@ -61,6 +60,10 @@ export class UserService extends AbstractService {
             catchError((error: any) => observableThrowError(error || 'Server error')));
     }
 
+    /**
+     * 
+     * @param id 
+     */
     delete(id: any): Observable<any> {
         return this.http.delete(
             `${environment.urlApiLocation}User/${id}`,
@@ -75,24 +78,22 @@ export class UserService extends AbstractService {
             catchError((error: any) => observableThrowError(error || 'Server error')));
     }
 
-    upload(files) {
+    /**
+     * 
+     * @param idUser 
+     * @param files 
+     */
+    upload(idUser: string, files) {
         if (files.length === 0)
           return;
     
         const formData = new FormData();
+        formData.append(idUser, files[0]);
     
-        for (let file of files)
-          formData.append(file.name, file);
-    
-        const uploadReq = new HttpRequest('POST', `api/upload`, formData, {
+        const uploadReq = new HttpRequest('POST', `${environment.urlApiLocation}User/Upload`, formData, {
           reportProgress: true,
         });
     
-        this.http.request(uploadReq).subscribe(event => {
-          if (event.type === HttpEventType.UploadProgress)
-            this.progress = Math.round(100 * event.loaded / event.total);
-          else if (event.type === HttpEventType.Response)
-            this.message = event.body.toString();
-        });
+        this.http.request(uploadReq).subscribe();
       }    
 }

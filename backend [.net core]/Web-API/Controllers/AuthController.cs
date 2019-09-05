@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using WebAPI.Models;
 using WebApplication.Services;
 
@@ -22,22 +16,28 @@ namespace WebAPI.Controllers
         private UserManager<User> _userManager;
         private SignInManager<User> _singInManager;
         private readonly Settings _appSettings;
+        private readonly IMapper _mapper;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<Settings> appSettings)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, IOptions<Settings> appSettings)
         {
             _userManager = userManager;
             _singInManager = signInManager;
             _appSettings = appSettings.Value;
+            _mapper = mapper;
         }
 
+        /// <summary>
+        /// POST : /api/Auth/Login
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("Login")]
-        //POST : /api/Auth/Login
+        [Route("Login")]        
         public async Task<IActionResult> Login([FromBody]LoginViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if (!(user != null && await _userManager.CheckPasswordAsync(user, model.Password)))
+            if ( user == null || await _userManager.CheckPasswordAsync(user, model.Password) == false )
                 return Unauthorized();
 
             var token = TokenService.getToken(user, _appSettings);
@@ -46,16 +46,16 @@ namespace WebAPI.Controllers
         }
 
 
+        /// <summary>
+        /// POST : /api/Auth/Register
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Register")]
-        //POST : /api/Auth/Register
         public async Task<Object> RegisterNewUser([FromBody]RegisterViewModel model)
         {
-            var applicationUser = new User() {
-                Email = model.Email,
-                UserName = model.Email,
-                Name = model.Email
-            };
+            var applicationUser = _mapper.Map<User>(model);
             
             try
             {

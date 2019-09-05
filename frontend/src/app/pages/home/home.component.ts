@@ -1,17 +1,16 @@
-import { Component, HostListener, NgZone, ViewChild } from '@angular/core';
+import { Component, HostListener, NgZone, ViewChild, ElementRef } from '@angular/core';
 import { ButtonsRendererComponent } from 'src/app/ui/datatable/renderers/buttons.renderer.component';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/core/services/user.service';
 import { DatatableNetComponent } from 'src/app/ui/datatable/datatable.net.component';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
-import { LoginForm } from 'src/app/core/models/login.form';
 import { finalize } from 'rxjs/operators';
 import { LoadingService } from 'src/app/theme/services';
 import { IMyDpOptions } from 'mydatepicker';
-import { HttpRequest, HttpEventType } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { empty } from 'rxjs';
+import { User } from 'src/app/core/models/user';
+import { TransformService } from 'src/app/core/services/transform.service';
 
 @Component({
   selector: 'app-home',
@@ -21,33 +20,31 @@ import { empty } from 'rxjs';
     UserService
   ]
 })
+
 export class HomeComponent {
 
+  /** @type {FormGroup} accountForm user form instance */
+  public accountForm: FormGroup;
+
+  /** @type {DatatableNetComponent} datatable user datatable instance  */
+  @ViewChild('datatable') public datatable: DatatableNetComponent;
+
+  /** @type {SwalComponent} modal windows instance for user edition */
+  @ViewChild('EditionBox') public EditionBox: SwalComponent;
+  
+  /** @type {ElementRef} */
+  @ViewChild("fileInput") fileInput: ElementRef;
+
   /**
-   * Date picker period start configuration.
+   * Date picker init date configuration.
    *
    * @type {IMyDpOptions}
    */
-  periodStartOptionsDP: IMyDpOptions = {
+  OptionsDP: IMyDpOptions = {
     dateFormat: 'dd/mm/yyyy'
   };
   
-  public startInitDate: any;
-  // public startInitDate: any = {date: {year: this.yearFilterValue, month: 1, day: 1}};
-
-  /** */
-  public accountDefinition: FormGroup;
-
-  /** */
-  public error = "";
-
-  /** */
-  @ViewChild('datatable') public datatable: DatatableNetComponent;
-
-  /** */
-  @ViewChild('EditionBox') public EditionBox: SwalComponent;
-  
-  /** */
+  /** @tableSettings */
   public tableSettings = {
     ajax: `${environment.urlApiLocation}User/List`,
     class: 'accounts',
@@ -69,16 +66,24 @@ export class HomeComponent {
     ]
   };
 
+  /** @error */
+  public error = "";
+
   constructor(
+    public userService: UserService,
     protected fb: FormBuilder,
-    protected userService: UserService,
     protected zone: NgZone,
-    protected loadingService: LoadingService,
-    protected http: HttpClient
+    protected http: HttpClient,
+    protected transformSerice: TransformService,
+    protected loadingService: LoadingService
     ) {     
       this.createForm();
   }
 
+  /**
+   * 
+   * @param target 
+   */
   @HostListener('click', ['$event.target'])
   public clickComponent(target: any): void {
       this.zone.runOutsideAngular(() => {
@@ -101,45 +106,33 @@ export class HomeComponent {
       });
   }  
 
+
+  /**
+   * 
+   */
   public newUser(): void {
     this.prepareForm();
-
-    this.accountDefinition.controls.password.setValue('');
-
     this.EditionBox.show();
   }
 
+  /**
+   * 
+   * @param $target 
+   */
   private getDataTableRowData($target): any {
     const datatable = $target.parents('table').DataTable()
     const $row = $target.parents('tr')
     return datatable.row($row).data()
   }
 
-  private getForm()  {
-    let date = this.accountDefinition.controls['postDate'].value;
-    return {
-      Email: this.accountDefinition.controls['email'].value,
-      Name: this.accountDefinition.controls['name'].value,
-      LastName: this.accountDefinition.controls['lastName'].value,
-      Years: this.accountDefinition.controls['years'].value,
-      PostDate: date ? date.formatted : '',
-      Position: this.accountDefinition.controls['position'].value,
-      Id: this.accountDefinition.controls['id'].value,
-      SecurityStamp: this.accountDefinition.controls['securityStamp'].value,
-      Password: this.accountDefinition.controls['password'].value
-    };
-  }
-
-  public prepareForm(row: LoginForm = new LoginForm()) {
-      this.accountDefinition.controls['email'].setValue(row.email);
-      this.accountDefinition.controls['name'].setValue(row.name);
-      this.accountDefinition.controls['lastName'].setValue(row.lastName);
-      this.accountDefinition.controls['years'].setValue(row.years);
-      this.accountDefinition.controls['postDate'].setValue( row.postDate );
-      this.accountDefinition.controls['position'].setValue(row.position);
-      this.accountDefinition.controls['id'].setValue(row.id);
-      this.accountDefinition.controls['securityStamp'].setValue(row.securityStamp);
-      this.accountDefinition.controls['password'].setValue('');
+  /**
+   * 
+   * @param row 
+   */
+  public prepareForm(row: User = new User()) {
+    let values = this.transformSerice.transformRowKeys(row);
+    this.accountForm.reset();
+    this.accountForm.patchValue(values);
   }
 
   public CloseModal(): void {
@@ -147,8 +140,8 @@ export class HomeComponent {
   }
 
   public saveOnCloseModal(): void {
-    const formValues = this.getForm();
     this.loadingService.start();
+    const formValues = this.transformSerice.transformPostDate( this.accountForm.getRawValue() );
 
     this.userService.save(formValues)
       .pipe(
@@ -158,48 +151,64 @@ export class HomeComponent {
       )
       .subscribe( (result) => {
           if (result.status === 'OK') {
-            this.error = "";
-            this.EditionBox.nativeSwal.close();
-            this.datatable.reload()
+            if (!formValues.Id)
+              this.uploadFile(this.fileInput.nativeElement.files);
+
+            this.finalizeUserCreate();
           }
           else 
             this.error = result.status.length > 0 ? result.status[0].description : '';
       });
   }
 
+
+  /**
+   * 
+   */
+  private finalizeUserCreate(): void {
+    this.error = "";
+    this.EditionBox.nativeSwal.close();
+    this.datatable.reload()
+  }
+
+  /**
+   * 
+   */
   protected createForm(): void {
-    // Validators.required
-    this.accountDefinition = this.fb.group({
-        email: [false],
-        name: [false],
-        lastName: [false],
-        years: [false],
-        postDate: [false],
-        position: [false],
-        id: [false],
-        securityStamp: [false],
-        password: [false]
+    this.accountForm = this.fb.group({
+        Email: ['', Validators.compose([
+          Validators.required
+        ])],
+        Name: ['', Validators.compose([
+          Validators.required
+        ])],
+        Password: ['', Validators.compose([
+          Validators.minLength(2)
+        ])],
+        LastName: [false],
+        Years:  ['', Validators.compose([
+          Validators.maxLength(2)
+        ])],
+        PostDate: [false],
+        Position:  ['', Validators.compose([
+          Validators.maxLength(255)
+        ])],
+        Id: [false],
+        SecurityStamp: [false]
     });
   }
 
-  public upload(files) {
-    if (files.length === 0 || empty(this.accountDefinition.controls['id'].value))
+  /**
+   * 
+   * @param files 
+   */
+  public uploadFile(file): void {
+    if (!file)
       return;
 
-    const formData = new FormData();
-
-    for (let file of files) {
-      let fileName = this.accountDefinition.controls['id'].value;
-      formData.append(fileName, file);
-    }
-
-    const uploadReq = new HttpRequest('POST', `${environment.urlApiLocation}User/Upload`, formData, {
-      reportProgress: true,
-    });
-
-    this.http.request(uploadReq).subscribe(event => {
-      
-    });
+    let idUser = this.accountForm.controls.id.value;
+    this.userService.upload(idUser, file.files);
   }
+
 
 }

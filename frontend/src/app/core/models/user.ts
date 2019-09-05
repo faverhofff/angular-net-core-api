@@ -1,14 +1,14 @@
 
 export class User {
-    constructor(public id: number = -1,
-                public name: string = '',
-                public lastName: string = '',
-                public years: number = 0,
-                public postDate: string = '',
-                public jobPost: string = '',
-                public email: string = '',
-                public password: string = '',
-                public logoImageFile: string = '') {
+    constructor(public Id: number = -1,
+                public Name: string = '',
+                public LastName: string = '',
+                public Years: number = 0,
+                public PostDate: string = '',
+                public Position: string = '',
+                public Email: string = '',
+                public Password: string = '',
+                public SecurityStamp: string = '') {
     }
 
     /**

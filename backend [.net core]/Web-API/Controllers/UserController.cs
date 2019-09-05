@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Web_Application.Services;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -20,42 +21,33 @@ namespace WebAPI.Controllers
         private UserManager<User> _userManager;
         private readonly Settings _appSettings;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IMapper _mapper;
 
         public UserController(UserManager<User> userManager, IOptions<Settings> appSettings, IMapper mapper, IHostingEnvironment hostingEnvironment)
         {
             _userManager = userManager;
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings.Value;   
             _hostingEnvironment = hostingEnvironment;
+            _mapper = mapper;
         }
 
-        [HttpPost, Authorize]
         [Route("List")]
+        [HttpPost, Authorize]
         public async Task<DataTable> List([FromBody]DataTableViewModel dtViewModel)
         {
             var list = this._userManager.Users.ToArray<User>();
 
-            return new DataTable()
-            {
-                draw = dtViewModel.draw,
-                recordsTotal = list.Length,
-                recordsFiltered = list.Length,
-                data = list.ToArray()
-            };
+            var dataTableResult = _mapper.Map<DataTable>(list);
+
+            dataTableResult.draw = dtViewModel.draw;
+
+            return dataTableResult;
         }
 
         [HttpPost, Authorize]
         public async Task<Object> Create([FromBody]UserViewModel model)
         {
-            var applicationUser = new User()
-            {
-                Email = model.Email,
-                UserName = model.Email,
-                Name = model.Name,
-                LastName = model.LastName,
-                Years = model.Years,
-                PostDate = model.PostDate,
-                Position = model.Position
-            };
+            var applicationUser = _mapper.Map<User>(model);
 
             try
             {
@@ -72,7 +64,9 @@ namespace WebAPI.Controllers
         public async Task<Object> Update([FromBody]UserViewModel model)
         {
             var applicationUser = await _userManager.FindByIdAsync(model.Id);
-            
+
+            //applicationUser = _mapper.Map<User>(model);
+
             applicationUser.Position = model.Position;
             applicationUser.Email = model.Email;
             applicationUser.Name = model.Name;
@@ -108,29 +102,24 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost, DisableRequestSizeLimit, Authorize]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Route("Upload")]
+        [HttpPost, DisableRequestSizeLimit, Authorize]
         public async Task<IActionResult> UploadFile()
         {
+            if (Request.Form.Files.Count == 0)
+                return BadRequest();
+
             try
             {
-                var file = Request.Form.Files[0];
-                string folderName = "Upload";
-                string webRootPath = _hostingEnvironment.ContentRootPath.Replace("Web-API", "Web-UPLOAD");
-                string newPath = Path.Combine(webRootPath, folderName);
-                if (!Directory.Exists(newPath))
-                {
-                    Directory.CreateDirectory(newPath);
-                }
-                if (file.Length > 0)
-                {
-                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).Name.Trim('"');
-                    string fullPath = Path.Combine(newPath, fileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                }
+                var webRootPath = _hostingEnvironment.ContentRootPath.Replace("Web-API", "Web-UPLOAD");
+                var directoryToDownload = DirectoryService.getUploadDirectory(webRootPath);
+
+                UploadService.UploadFile(Request.Form.Files[0], directoryToDownload);
+                
                 return Ok();
             }
             catch (System.Exception ex)

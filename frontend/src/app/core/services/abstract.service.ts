@@ -36,19 +36,6 @@ export class AbstractService {
         return throwError( error );
     }
 
-    protected uploadFile(path: string, body: Object = {}): Observable<any> {
-        const headersConfig = {
-            'Accept': 'application/json'
-        };
-
-        if (this.accessTokenService.getToken()) {
-            headersConfig['Authorization'] = `Bearer ${this.accessTokenService.getToken()}`;
-        }
-
-        return this.http.post(`api${path}`, body, {headers: new HttpHeaders(headersConfig), reportProgress: true})
-            .pipe(catchError(this.handleError.bind(this)));
-    }
-
     /**
      * Create an observable to start a download.
      *

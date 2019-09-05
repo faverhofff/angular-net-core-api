@@ -8,7 +8,6 @@ import {catchError, map} from 'rxjs/internal/operators';
 import * as CryptoJS from 'crypto-js';
 import {environment} from '../../../environments/environment';
 import { User } from '../models/user';
-import { LoginForm } from '../models/login.form';
 
 @Injectable()
 export class AuthenticationService {
@@ -35,6 +34,10 @@ export class AuthenticationService {
         }
     }
 
+    /**
+     * 
+     * @param user 
+     */
     static setUser(user: User): void {
         const output = CryptoJS.AES.encrypt(JSON.stringify(user), environment.encryptKey).toString();
         localStorage.setItem('user', output);

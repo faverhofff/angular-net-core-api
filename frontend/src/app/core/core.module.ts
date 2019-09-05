@@ -7,7 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { CookieModule } from 'ngx-cookie';
 
 import { AuthGuard } from './guards/auth.guard';
-import { AccessTokenService, AuthenticationService } from './services';
+import { AccessTokenService, AuthenticationService, TransformService } from './services';
 import { LoginComponent } from './pages/login/login.component';
 import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import {RouterModule} from "@angular/router";
@@ -20,6 +20,7 @@ export const CORE_PROVIDERS = [
     AccessTokenService,
     AuthenticationService,
     CookieService,
+    TransformService,
     {provide: 'BASE_API_URL', useValue: '/api'},
     JWTInterceptor
 ];

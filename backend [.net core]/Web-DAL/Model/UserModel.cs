@@ -15,6 +15,6 @@ namespace WebAPI.Models
         public string LastName { get; set; }
         public int Years { get; set; }
         public string PostDate { get; set; }
-        public string Position { get; set; }
+        public string JobPost { get; set; }
     }
 }
