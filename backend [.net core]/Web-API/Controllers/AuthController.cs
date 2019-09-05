@@ -4,8 +4,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using WebAPI.Models;
+using WebDAL.Models;
 using WebApplication.Services;
+using WebAPI.Model.Requests;
 
 namespace WebAPI.Controllers
 {
@@ -33,7 +34,7 @@ namespace WebAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Login")]        
-        public async Task<IActionResult> Login([FromBody]LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody]LoginRequest model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
@@ -53,7 +54,7 @@ namespace WebAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Register")]
-        public async Task<Object> RegisterNewUser([FromBody]RegisterViewModel model)
+        public async Task<Object> RegisterNewUser([FromBody]RegisterRequest model)
         {
             var applicationUser = _mapper.Map<User>(model);
             

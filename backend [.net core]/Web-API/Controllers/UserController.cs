@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Web_Application.Services;
-using WebAPI.Models;
+using WebApi.Model.Response;
+using WebAPI.Model.Requests;
+using WebApplication.Services;
+using WebDAL.Models;
 
 namespace WebAPI.Controllers
 {
@@ -31,21 +31,31 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// POST: /api/User/List
+        /// </summary>
+        /// <param name="dtViewModel"></param>
+        /// <returns></returns>
         [Route("List")]
         [HttpPost, Authorize]
-        public async Task<DataTable> List([FromBody]DataTableViewModel dtViewModel)
+        public async Task<DataTableResponse> List([FromBody]DataTableRequest dtViewModel)
         {
             var list = this._userManager.Users.ToArray<User>();
 
-            var dataTableResult = _mapper.Map<DataTable>(list);
+            var dataTableResult = _mapper.Map<DataTableResponse>(list);
 
             dataTableResult.draw = dtViewModel.draw;
 
             return dataTableResult;
         }
 
+        /// <summary>
+        /// POST: /api/User
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost, Authorize]
-        public async Task<Object> Create([FromBody]UserViewModel model)
+        public async Task<Object> Create([FromBody]UserRequest model)
         {
             var applicationUser = _mapper.Map<User>(model);
 
@@ -60,8 +70,13 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        ///  PUT: /api/User
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut, Authorize]
-        public async Task<Object> Update([FromBody]UserViewModel model)
+        public async Task<Object> Update([FromBody]UserRequest model)
         {
             var applicationUser = await _userManager.FindByIdAsync(model.Id);
 
@@ -86,6 +101,11 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// DELETE: /api/User/{id}
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(string id)
         {
@@ -103,7 +123,7 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// POST: /api/User/Upload
         /// </summary>
         /// <returns></returns>
         [Route("Upload")]

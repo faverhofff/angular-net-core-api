@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebAPI.Models
+namespace WebAPI.Model.Requests
 {
-    public class UserViewModel
+    public class UserRequest
     {
         public string Id { get; set; }
         [Required]

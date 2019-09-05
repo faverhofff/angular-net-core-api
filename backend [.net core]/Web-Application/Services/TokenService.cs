@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
-using WebAPI.Models;
+using WebDAL.Models;
 using Microsoft.Extensions.Options;
 
 namespace WebApplication.Services

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel;
 
-namespace WebAPI.Models
+namespace WebDAL.Models
 {
     public class User : IdentityUser
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Models;
+using WebDAL.Models;
 
 namespace WebDAL
 {

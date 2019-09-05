@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebAPI.Models
+namespace WebDAL.Models
 {
     [Table("AspNetUsers")]
     public class UserModel 

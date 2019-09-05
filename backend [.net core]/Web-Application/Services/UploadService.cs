@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Headers;
-using System.Text;
 
-namespace Web_Application.Services
+namespace WebApplication.Services
 {
     public class UploadService
     {

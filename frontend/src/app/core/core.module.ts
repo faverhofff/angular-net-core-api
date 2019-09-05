@@ -14,6 +14,7 @@ import {RouterModule} from "@angular/router";
 import { JWTInterceptor } from './interceptors/jwt.interceptor';
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { ErrorsInterceptor } from './interceptors/error.interceptor';
 
 export const CORE_PROVIDERS = [
     AuthGuard,
@@ -21,6 +22,7 @@ export const CORE_PROVIDERS = [
     AuthenticationService,
     CookieService,
     TransformService,
+    ErrorsInterceptor,
     {provide: 'BASE_API_URL', useValue: '/api'},
     JWTInterceptor
 ];

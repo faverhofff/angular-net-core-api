@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\AuthenticationContext.cs" />
-    <Compile Remove="Models\LoginModel.cs" />
-    <Compile Remove="Models\User.cs" />
+    <Compile Remove="Model\AuthenticationContext.cs" />
+    <Compile Remove="Model\LoginModel.cs" />
+    <Compile Remove="Model\User.cs" />
   </ItemGroup>
 
   <ItemGroup>
