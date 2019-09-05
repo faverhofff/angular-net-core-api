@@ -15,8 +15,7 @@ namespace WebAPI.Mapping
                 {
                     dest.Id = dest.Id == "-1" ? null : dest.Id;
                     dest.UserName = dest.UserName ?? src.Email;
-                })
-                .ForAllOtherMembers(opt => opt.Ignore());
+                }).IncludeAllDerived();
 
             CreateMap<User[], DataTableResponse>()
                 .AfterMap((src, dest) =>
